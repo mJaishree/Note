@@ -9,7 +9,7 @@ export default function Home() {
 
   return (
     <div className="min-h-[80vh] flex flex-col">
-      {/* Breadcrumb */}
+      {/* Breadcrumb header */}
       <div className="px-4 sm:px-6 lg:px-8 py-2 text-sm text-gray-600 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto">
           <span className="hover:underline cursor-pointer transition-colors hover:text-gray-800">

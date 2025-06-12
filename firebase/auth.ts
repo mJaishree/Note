@@ -82,6 +82,8 @@ const getAuthErrorMessage = (errorCode: string): string => {
       return "No account found with this email";
     case 'auth/wrong-password':
       return "Incorrect password";
+    case 'auth/invalid-credential':
+      return "Invalid email or password";
     case 'auth/too-many-requests':
       return "Too many failed attempts. Please try again later";
     default:

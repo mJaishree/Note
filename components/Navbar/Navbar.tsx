@@ -24,7 +24,7 @@ export default function Navbar() {
     setShowLogoutDialog(false);
   };
 
-  // Helper function to check if a link is active
+ 
   const isActiveLink = (href: string) => {
     if (href === "/") {
       return pathname === "/";
@@ -32,7 +32,7 @@ export default function Navbar() {
     return pathname.startsWith(href);
   };
 
-  // Helper function to get link classes
+  
   const getLinkClasses = (href: string) => {
     const baseClasses = "text-[#0E3B4C] font-bold text-sm sm:text-base px-3 py-2 rounded-md transition-colors duration-200";
     const activeClasses = "bg-[#D4B5A0]";
@@ -42,17 +42,17 @@ export default function Navbar() {
       : `${baseClasses} hover:bg-[#D4B5A0] hover:bg-opacity-50`;
   };
 
-  // Check if we're on pages where navigation should be hidden completely
+ 
   const shouldHideNavigation = pathname === "/" || pathname === "/signup";
   
-  // Check if we're on pages where Account and Login should be hidden
+ 
   const shouldHideAuthLinks = pathname === "/notes" || pathname === "/about";
 
   return (
     <>
       <nav className="bg-[#A3D3D8] border-b border-gray-200 px-4 py-3">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center">
-          {/* Logo */}
+       
           <Link
             href="/"
             className="text-xl sm:text-2xl font-bold text-[#0E3B4C] mb-3 sm:mb-0"
@@ -60,7 +60,7 @@ export default function Navbar() {
             Keep NOTES
           </Link>
 
-          {/* Navigation Links - Only show if not on home page or signup page */}
+        
           {!shouldHideNavigation && (
             <div className="flex flex-wrap justify-center sm:justify-end items-center space-x-3 sm:space-x-6">
               <Link
@@ -76,7 +76,7 @@ export default function Navbar() {
                 Notes
               </Link>
               
-              {/* Account and Login - Hide on /notes and /about pages */}
+           
               {!shouldHideAuthLinks && (
                 <>
                   <Link
@@ -94,7 +94,7 @@ export default function Navbar() {
                 </>
               )}
               
-              {/* Logout Button */}
+            
               <button
                 onClick={handleLogoutClick}
                 className="text-[#0E3B4C] hover:text-red-600 transition-colors duration-200 p-1"
@@ -107,7 +107,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Logout Confirmation Dialog */}
+     
       <LogoutDialog
         isOpen={showLogoutDialog}
         onConfirm={handleConfirmLogout}

@@ -44,13 +44,13 @@ export default function SignupForm() {
         console.log("User created successfully:", result.user?.uid);
         setSuccess(`${result.message} Redirecting...`);
         
-        // Clear form
+      
         setUsername("");
         setEmail("");
         setPassword("");
         setConfirmPassword("");
         
-        // Navigate to home page after successful signup
+
         setTimeout(() => {
           router.push("/");
         }, 2000);
@@ -183,7 +183,7 @@ export default function SignupForm() {
               <p className="text-xs text-gray-600">
                 Already have an account?{" "}
                 <span 
-                  onClick={() => router.push("/login")}
+                  onClick={() => router.push("/")}
                   className="text-blue-600 hover:text-blue-800 cursor-pointer font-semibold hover:underline"
                 >
                   Sign In

@@ -20,19 +20,18 @@ export default function Navbar() {
     setLogoutLoading(true);
 
     try {
-      // Simple logout - clear any stored data and redirect
-      // Clear localStorage/sessionStorage if you're storing any user data
+      
       localStorage.clear();
       sessionStorage.clear();
       
-      // Add a small delay to show the loading state
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Close the dialog
+    
       setShowLogoutDialog(false);
       setLogoutLoading(false);
       
-      // Redirect to login page
+     
       router.push('/');
       
       console.log("Logged out successfully!");
@@ -40,7 +39,7 @@ export default function Navbar() {
     } catch (error) {
       console.error("Logout error:", error);
       setLogoutLoading(false);
-      // Optionally show an error message to the user
+     
     }
   };
 

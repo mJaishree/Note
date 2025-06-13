@@ -1,202 +1,213 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { onAuthStateChanged, User } from 'firebase/auth'
-import { auth } from '@/firebase/firebase'
-import { createNote, getUserNotes, updateNote, deleteNote, subscribeToUserNotes, Note } from '@/firebase/notes'
-import Breadcrumb from '@/components/Notes/Breadcrumb'
-import Header from '@/components/Notes/Header'
-import NotesGrid from '@/components/Notes/NotesGrid'
-import SelectedNotePreview from '@/components/Notes/SelectedNotePreview'
-import DialogModal from '@/components/Notes/DialogModal'
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "@/firebase/firebase";
+import {
+  createNote,
+  getUserNotes,
+  updateNote,
+  deleteNote,
+  subscribeToUserNotes,
+  Note,
+} from "@/firebase/notes";
+import Breadcrumb from "@/components/Notes/Breadcrumb";
+import Header from "@/components/Notes/Header";
+import NotesGrid from "@/components/Notes/NotesGrid";
+import SelectedNotePreview from "@/components/Notes/SelectedNotePreview";
+import DialogModal from "@/components/Notes/DialogModal";
 
 export default function Notes() {
   // Auth state
-  const [user, setUser] = useState<User | null>(null)
-  const [authLoading, setAuthLoading] = useState(true)
-  
-  // Notes state
-  const [notes, setNotes] = useState<Note[]>([])
-  const [selectedNote, setSelectedNote] = useState<Note | null>(null)
-  const [notesLoading, setNotesLoading] = useState(false)
-  const [notesError, setNotesError] = useState('')
-  
-  // Dialog state
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-  const [dialogLoading, setDialogLoading] = useState(false)
-  const [dialogError, setDialogError] = useState('')
-  
-  // Search state
-  const [searchTerm, setSearchTerm] = useState('')
-  
-  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
-  // Check authentication status
+  // Notes state
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [notesLoading, setNotesLoading] = useState(false);
+  const [notesError, setNotesError] = useState("");
+
+  // Use ref to access current selectedNote without causing re-renders
+  const selectedNoteRef = useRef<Note | null>(null);
+  
+  // Update ref whenever selectedNote changes
+  useEffect(() => {
+    selectedNoteRef.current = selectedNote;
+  }, [selectedNote]);
+
+  // Dialog state
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [dialogLoading, setDialogLoading] = useState(false);
+  const [dialogError, setDialogError] = useState("");
+
+  // Search state
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const router = useRouter();
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        setUser(currentUser)
-        console.log('User authenticated:', currentUser.uid)
+        setUser(currentUser);
+        console.log("User authenticated:", currentUser.uid);
       } else {
-        console.log('User not authenticated, redirecting to login')
-        router.push('/')
+        console.log("User not authenticated, redirecting to login");
+        router.push("/");
       }
-      setAuthLoading(false)
-    })
+      setAuthLoading(false);
+    });
 
-    return () => unsubscribe()
-  }, [router])
+    return () => unsubscribe();
+  }, [router]);
 
-  // Subscribe to user's notes in real-time
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
 
-    console.log('Setting up real-time notes listener for user:', user.uid)
-    setNotesLoading(true)
-    setNotesError('')
+    console.log("Setting up real-time notes listener for user:", user.uid);
+    setNotesLoading(true);
+    setNotesError("");
 
     const unsubscribe = subscribeToUserNotes(user.uid, (userNotes) => {
-      console.log('Received notes update:', userNotes.length, 'notes')
-      setNotes(userNotes)
-      setNotesLoading(false)
-      
-      // Update selected note if it was modified
-      if (selectedNote) {
-        const updatedSelectedNote = userNotes.find(note => note.id === selectedNote.id)
+      console.log("Received notes update:", userNotes.length, "notes");
+      setNotes(userNotes);
+      setNotesLoading(false);
+
+      // Use ref to access current selectedNote without causing dependency issues
+      const currentSelectedNote = selectedNoteRef.current;
+      if (currentSelectedNote) {
+        const updatedSelectedNote = userNotes.find(
+          (note) => note.id === currentSelectedNote.id
+        );
         if (updatedSelectedNote) {
-          setSelectedNote(updatedSelectedNote)
+          setSelectedNote(updatedSelectedNote);
         } else {
           // Note was deleted
-          setSelectedNote(null)
+          setSelectedNote(null);
         }
       }
-    })
+    });
 
     return () => {
-      console.log('Cleaning up notes listener')
-      unsubscribe()
-    }
-  }, [user, selectedNote])
+      console.log("Cleaning up notes listener");
+      unsubscribe();
+    };
+  }, [user]); // Removed selectedNote from dependencies
 
   // Create new note
   const handleCreateNote = async () => {
-    if (!user || !title.trim()) return
+    if (!user || !title.trim()) return;
 
-    setDialogLoading(true)
-    setDialogError('')
+    setDialogLoading(true);
+    setDialogError("");
 
     try {
-      const result = await createNote(user.uid, title, content)
-      
+      const result = await createNote(user.uid, title, content);
+
       if (result.success) {
-        console.log('Note created successfully:', result.noteId)
-        closeDialog()
-        // Note will be automatically added to the list via real-time listener
+        console.log("Note created successfully:", result.noteId);
+        closeDialog();
       } else {
-        setDialogError(result.message)
-        console.error('Failed to create note:', result.error)
+        setDialogError(result.message);
+        console.error("Failed to create note:", result.error);
       }
     } catch (error) {
-      console.error('Unexpected error creating note:', error)
-      setDialogError('An unexpected error occurred')
+      console.error("Unexpected error creating note:", error);
+      setDialogError("An unexpected error occurred");
     } finally {
-      setDialogLoading(false)
+      setDialogLoading(false);
     }
-  }
+  };
 
   // Update existing note
   const handleUpdateNote = async () => {
-    if (!selectedNote || !title.trim()) return
+    if (!selectedNote || !title.trim()) return;
 
-    setDialogLoading(true)
-    setDialogError('')
+    setDialogLoading(true);
+    setDialogError("");
 
     try {
-      const result = await updateNote(selectedNote.id, title, content)
-      
+      const result = await updateNote(selectedNote.id, title, content);
+
       if (result.success) {
-        console.log('Note updated successfully:', selectedNote.id)
-        closeDialog()
-        // Note will be automatically updated in the list via real-time listener
+        console.log("Note updated successfully:", selectedNote.id);
+        closeDialog();
       } else {
-        setDialogError(result.message)
-        console.error('Failed to update note:', result.error)
+        setDialogError(result.message);
+        console.error("Failed to update note:", result.error);
       }
     } catch (error) {
-      console.error('Unexpected error updating note:', error)
-      setDialogError('An unexpected error occurred')
+      console.error("Unexpected error updating note:", error);
+      setDialogError("An unexpected error occurred");
     } finally {
-      setDialogLoading(false)
+      setDialogLoading(false);
     }
-  }
+  };
 
   // Delete note
   const handleDeleteNote = async (noteId: string) => {
-    if (!user) return
+    if (!user) return;
 
     try {
-      const result = await deleteNote(noteId)
-      
+      const result = await deleteNote(noteId);
+
       if (result.success) {
-        console.log('Note deleted successfully:', noteId)
-        // Note will be automatically removed from the list via real-time listener
+        console.log("Note deleted successfully:", noteId);
       } else {
-        console.error('Failed to delete note:', result.error)
-        setNotesError(result.message)
+        console.error("Failed to delete note:", result.error);
+        setNotesError(result.message);
       }
     } catch (error) {
-      console.error('Unexpected error deleting note:', error)
-      setNotesError('Failed to delete note')
+      console.error("Unexpected error deleting note:", error);
+      setNotesError("Failed to delete note");
     }
-  }
+  };
 
   // Dialog functions
   const openCreateDialog = () => {
-    setIsDialogOpen(true)
-    setIsEditing(false)
-    setTitle('')
-    setContent('')
-    setDialogError('')
-  }
+    setIsDialogOpen(true);
+    setIsEditing(false);
+    setTitle("");
+    setContent("");
+    setDialogError("");
+  };
 
-  // Fixed: Remove the extra userId type requirement
   const openEditDialog = (note: Note) => {
-    setIsDialogOpen(true)
-    setIsEditing(true)
-    setSelectedNote(note)
-    setTitle(note.title)
-    setContent(note.content)
-    setDialogError('')
-  }
+    setIsDialogOpen(true);
+    setIsEditing(true);
+    setSelectedNote(note);
+    setTitle(note.title);
+    setContent(note.content);
+    setDialogError("");
+  };
 
   const closeDialog = () => {
-    setIsDialogOpen(false)
-    setIsEditing(false)
-    setTitle('')
-    setContent('')
-    setDialogError('')
-    setDialogLoading(false)
-  }
+    setIsDialogOpen(false);
+    setIsEditing(false);
+    setTitle("");
+    setContent("");
+    setDialogError("");
+    setDialogLoading(false);
+  };
 
   const handleSave = () => {
     if (isEditing) {
-      handleUpdateNote()
+      handleUpdateNote();
     } else {
-      handleCreateNote()
+      handleCreateNote();
     }
-  }
+  };
 
-  // Filter notes based on search term
-  const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredNotes = notes.filter(
+    (note) =>
+      note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  // Show loading screen while checking authentication
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -205,10 +216,9 @@ export default function Notes() {
           <p className="text-gray-800">Checking authentication...</p>
         </div>
       </div>
-    )
+    );
   }
 
-  // Don't render if user is not authenticated (will redirect)
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -217,7 +227,7 @@ export default function Notes() {
           <p className="text-gray-800">Redirecting to login...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -231,16 +241,16 @@ export default function Notes() {
             Welcome back, {user.displayName || user.email}! 👋
           </h1>
           <p className="text-sm text-gray-600">
-            You have {notes.length} note{notes.length !== 1 ? 's' : ''} in your collection
+            You have {notes.length} note{notes.length !== 1 ? "s" : ""} in your
+            collection
           </p>
         </div>
 
-        {/* Error message for notes operations */}
         {notesError && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
             {notesError}
-            <button 
-              onClick={() => setNotesError('')}
+            <button
+              onClick={() => setNotesError("")}
               className="ml-2 text-red-800 hover:text-red-900 font-semibold"
             >
               ✕
@@ -287,5 +297,5 @@ export default function Notes() {
         error={dialogError}
       />
     </div>
-  )
+  );
 }

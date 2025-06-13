@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInUser } from "@/firebase/auth";
+import Loader from "../Loader/Loader";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -10,13 +11,13 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  
+
   const router = useRouter();
 
   const handleLogin = async () => {
     setError("");
     setSuccess("");
-    
+
     // Validation
     if (!email || !password) {
       setError("Please fill in all fields");
@@ -27,15 +28,15 @@ export default function LoginForm() {
 
     try {
       const result = await signInUser(email, password);
-      
+
       if (result.success) {
         console.log("User logged in successfully:", result.user?.uid);
         setSuccess(`${result.message} Redirecting...`);
-        
+
         // Clear form
         setEmail("");
         setPassword("");
-        
+
         // Navigate to dashboard or home page after successful login
         setTimeout(() => {
           router.push("/notes"); // You can change this to wherever you want to redirect
@@ -44,7 +45,6 @@ export default function LoginForm() {
         setError(result.message);
         console.error("Login error:", result.error);
       }
-      
     } catch (error) {
       console.error("Unexpected error:", error);
       setError("An unexpected error occurred");
@@ -130,7 +130,15 @@ export default function LoginForm() {
                 disabled={loading}
                 className="w-full bg-[#D4B5A0] text-gray-800 py-3 px-4 rounded-lg font-semibold hover:bg-[#C8A690] active:bg-[#BCA085] transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                {loading ? "Signing In..." : "Sign In"}
+                {loading ? (
+                  <Loader
+                    size="sm"
+                    color="text-gray-800"
+                    text="Creating Account..."
+                  />
+                ) : (
+                  "Sign In"
+                )}
               </button>
             </div>
 
@@ -138,7 +146,7 @@ export default function LoginForm() {
             <div className="text-center pt-2">
               <p className="text-xs text-gray-600">
                 Don't have an account?{" "}
-                <span 
+                <span
                   onClick={() => router.push("/signup")}
                   className="text-blue-600 hover:text-blue-800 cursor-pointer font-semibold hover:underline"
                 >

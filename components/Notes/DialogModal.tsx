@@ -24,7 +24,7 @@ interface DialogModalProps {
   error?: string
 }
 
-// Simple rich text editor component
+
 const SimpleEditor = ({ 
   value, 
   onChange, 

@@ -4,11 +4,11 @@ import { auth } from "../firebase/firebase";
 // Signup function
 export const signUpUser = async (email: string, password: string, username: string) => {
   try {
-    // Create user with Firebase Auth
+    
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    // Update user profile with username
+    
     await updateProfile(user, {
       displayName: username
     });
@@ -69,7 +69,7 @@ export const getCurrentUser = (): User | null => {
   return auth.currentUser;
 };
 
-// Helper function for error messages
+
 const getAuthErrorMessage = (errorCode: string): string => {
   switch (errorCode) {
     case 'auth/email-already-in-use':

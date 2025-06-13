@@ -134,7 +134,7 @@ export const deleteNote = async (noteId: string) => {
   }
 };
 
-// Real-time listener for user notes
+
 export const subscribeToUserNotes = (userId: string, callback: (notes: Note[]) => void) => {
   const q = query(
     collection(db, "notes"),

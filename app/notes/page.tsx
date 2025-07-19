@@ -243,6 +243,7 @@ export default function Notes() {
           <p className="text-sm text-gray-600">
             You have {notes.length} task{notes.length !== 1 ? "s" : ""} in your
             collection
+            
           </p>
         </div>
 

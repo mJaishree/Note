@@ -78,7 +78,7 @@ export default function Navbar() {
             href="/"
             className="text-xl sm:text-2xl font-bold text-[#0E3B4C] mb-3 sm:mb-0"
           >
-            Keep NOTES
+            TODO
           </Link>
 
           {!shouldHideNavigation && (

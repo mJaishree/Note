@@ -241,7 +241,7 @@ export default function Notes() {
             Welcome back, {user.displayName || user.email}! 👋
           </h1>
           <p className="text-sm text-gray-600">
-            You have {notes.length} note{notes.length !== 1 ? "s" : ""} in your
+            You have {notes.length} task{notes.length !== 1 ? "s" : ""} in your
             collection
           </p>
         </div>

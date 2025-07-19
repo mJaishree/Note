@@ -13,7 +13,7 @@ export default function Header({ searchTerm, setSearchTerm, onCreateNote }: Head
     <div className="bg-[#A3D3D8] rounded-xl shadow-xl mb-6 overflow-hidden">
       <div className="bg-[#92C5CB] px-6 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <span className="text-lg font-bold text-gray-800">📝 Notes Manager</span>
+          <span className="text-lg font-bold text-gray-800">📝 Tasks Manager</span>
           <div className="flex space-x-1">
             <div className="w-2.5 h-2.5 bg-red-400 rounded-full shadow-sm"></div>
             <div className="w-2.5 h-2.5 bg-yellow-400 rounded-full shadow-sm"></div>
@@ -35,7 +35,7 @@ export default function Header({ searchTerm, setSearchTerm, onCreateNote }: Head
             onClick={onCreateNote}
             className="px-6 py-2.5 bg-[#D4B5A0] text-gray-800 rounded-lg font-semibold hover:bg-[#C9A892] active:bg-[#BE9B84] transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg"
           >
-            ✨ New Note
+            ✨ New Task
           </button>
         </div>
       </div>

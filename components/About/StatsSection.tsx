@@ -6,7 +6,7 @@ export default function StatsSection() {
   const stats = [
     { icon: "🚀", title: "Fast & Reliable", desc: "Built with Next.js for optimal performance and SEO", color: "bg-green-500" },
     { icon: "🎨", title: "Beautiful UI", desc: "Carefully crafted interface with smooth animations", color: "bg-purple-500" },
-    { icon: "☁️", title: "Cloud Sync", desc: "Your notes are safely stored and synced with Firebase", color: "bg-blue-500" }
+    { icon: "☁️", title: "Cloud Sync", desc: "Your tasks are safely stored and synced with Firebase", color: "bg-blue-500" }
   ]
 
   return (

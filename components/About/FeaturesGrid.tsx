@@ -19,13 +19,13 @@ export default function FeaturesGrid({ activeFeature, setActiveFeature }: Featur
     {
       icon: "✨",
       title: "Create & Edit",
-      description: "Seamlessly create and edit your notes with our intuitive interface",
+      description: "Seamlessly create and edit your task with our intuitive interface",
       color: "from-purple-400 to-pink-400"
     },
     {
       icon: "🔍",
       title: "Quick Preview",
-      description: "Preview your notes instantly without opening the editor",
+      description: "Preview your tasks instantly without opening the editor",
       color: "from-blue-400 to-cyan-400"
     },
     {

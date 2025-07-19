@@ -52,11 +52,11 @@ export default function AboutPage() {
           </div>
           <h1 className="text-5xl font-bold text-gray-800 mb-4 animate-fade-in-up">
             <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Notes App
+              TODO App
             </span>
           </h1>
           <div className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed animate-typewriter">
-            A modern, intuitive note-taking application built with cutting-edge web technologies. 
+            A modern, intuitive task management application built with cutting-edge web technologies. 
           </div>
         </div>
 
